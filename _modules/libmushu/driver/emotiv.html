@@ -176,26 +176,26 @@
         <span class="c"># if the first bit is not set, the remaining 7 bits are the counter</span>
         <span class="c"># otherwise the remaining bits are the battery</span>
         <span class="n">shift</span> <span class="o">-=</span> <span class="mi">8</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">b11111111</span>
-        <span class="k">if</span> <span class="n">tmp</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">b10000000</span><span class="p">:</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mb">0b11111111</span>
+        <span class="k">if</span> <span class="n">tmp</span> <span class="o">&amp;</span> <span class="mb">0b10000000</span><span class="p">:</span>
             <span class="c"># battery</span>
             <span class="n">counter</span> <span class="o">=</span> <span class="mi">128</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_battery</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">b01111111</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_battery</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">&amp;</span> <span class="mb">0b01111111</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># counter</span>
-            <span class="n">counter</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">b01111111</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">&amp;</span> <span class="mb">0b01111111</span>
         <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_battery</span><span class="p">)</span>
         <span class="c"># 7x data (14 bit)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">):</span>
             <span class="n">shift</span> <span class="o">-=</span> <span class="mi">14</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">b11111111111111</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mb">0b11111111111111</span><span class="p">)</span>
         <span class="c"># 1x quality (14 bit)</span>
         <span class="c"># we assume it is the contact quality for an electrode, the counter</span>
         <span class="c"># gives the number of the electrode. since we only have 14 electrodes</span>
         <span class="c"># we only take the values from counters 0..13 and 64..77</span>
         <span class="n">shift</span> <span class="o">-=</span> <span class="mi">14</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">b11111111111111</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mb">0b11111111111111</span>
         <span class="k">if</span> <span class="n">counter</span> <span class="o">&lt;</span> <span class="mi">128</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">counter</span> <span class="o">%</span> <span class="mi">64</span> <span class="o">&lt;</span> <span class="mi">14</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_quality</span><span class="p">[</span><span class="n">counter</span> <span class="o">%</span> <span class="mi">64</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
@@ -204,14 +204,14 @@
         <span class="c"># 7x data (14 bit)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">):</span>
             <span class="n">shift</span> <span class="o">-=</span> <span class="mi">14</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">b11111111111111</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mb">0b11111111111111</span><span class="p">)</span>
         <span class="c"># 2x gyroscope (8 bit)</span>
         <span class="c"># the first bit denotes the sign the remaining 7 bits the number</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
             <span class="n">shift</span> <span class="o">-=</span> <span class="mi">8</span>
-            <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">b01111111</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mb">0b01111111</span>
             <span class="n">tmp</span> <span class="o">-=</span> <span class="mi">100</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="n">b10000000</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mb">0b10000000</span><span class="p">:</span>
                 <span class="n">tmp</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
         <span class="c"># 1x ??? (8 bit)</span>
@@ -272,7 +272,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Bastian Venthur.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

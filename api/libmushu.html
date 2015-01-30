@@ -63,9 +63,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="libmushu.driver.html">libmushu.driver package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="libmushu.driver.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="libmushu.driver.html#module-libmushu.driver.emotiv">libmushu.driver.emotiv module</a><ul class="simple">
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="libmushu.driver.html#libmushu-driver-emotiv-module">libmushu.driver.emotiv module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="libmushu.driver.html#module-libmushu.driver.fsm">libmushu.driver.fsm module</a><ul class="simple">
 </ul>
 </li>
@@ -97,7 +95,8 @@
 <p>As a user, it is very unlikely that you&#8217;ll have to deal with it
 directly. Its main purpose is to add additional functionality to the low
 level amplifier drivers. This functionality includes features like:
-saving data to a file. or being able to receive marker via TCP/IP.</p>
+saving data to a file. or being able to receive marker via network
+(TCP/IP and UDP).</p>
 <p>By using the <tt class="xref py py-func docutils literal"><span class="pre">libmushu.__init__.get_amp()</span></tt> method, you&#8217;ll
 automatically receive decorated amplifiers.</p>
 <dl class="class">
@@ -105,7 +104,7 @@ automatically receive decorated amplifiers.</p>
 <em class="property">class </em><tt class="descclassname">libmushu.ampdecorator.</tt><tt class="descname">AmpDecorator</tt><big>(</big><em>ampcls</em><big>)</big><a class="reference internal" href="../_modules/libmushu/ampdecorator.html#AmpDecorator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.ampdecorator.AmpDecorator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#libmushu.amplifier.Amplifier" title="libmushu.amplifier.Amplifier"><tt class="xref py py-class docutils literal"><span class="pre">libmushu.amplifier.Amplifier</span></tt></a></p>
 <p>This class &#8216;decorates&#8217; the Low-Level Amplifier classes with
-TCP-Marker and Save-To-File functionality.</p>
+Network-Marker and Save-To-File functionality.</p>
 <p>You use it by decorating (not as in Python-Decorator, but in the GoF
 sense) the low level amplifier class you want to use:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">libmushu</span>
@@ -115,8 +114,8 @@ sense) the low level amplifier class you want to use:</p>
 <span class="n">amp</span> <span class="o">=</span> <span class="n">Ampdecorator</span><span class="p">(</span><span class="n">RandomAmp</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Waring: The TCP marker timings on Windows have a resolution of
-10ms-15ms.  On Linux the resolution is 1us. This is due to
+<p>Waring: The network marker timings on Windows have a resolution of
+10ms-15ms. On Linux the resolution is 1us. This is due to
 limitations of Python&#8217;s time.time method, or rather a Windows
 specific issue.</p>
 <p>There exists currently no precise timer, providing times which are
@@ -252,13 +251,331 @@ respectively.</p>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="libmushu.ampdecorator.MarkerHandler">
+<em class="property">class </em><tt class="descclassname">libmushu.ampdecorator.</tt><tt class="descname">MarkerHandler</tt><big>(</big><em>socket</em>, <em>queue</em><big>)</big><a class="reference internal" href="../_modules/libmushu/ampdecorator.html#MarkerHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.ampdecorator.MarkerHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/asynchat.html#asynchat.async_chat" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">asynchat.async_chat</span></tt></a></p>
+<p>Handler for incoming data streams.</p>
+<p>This handler processes incoming data from a TCP or UDP sockets. Each
+packet ends with a terminator character sequence. The handler takes
+care of incomplete packets and puts complete packets in the queue.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">addr</span></tt></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">accept</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_channel</span></tt>([map])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">bind</span></tt>(addr)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">close</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">close_when_done</span></tt>()</td>
+<td>automatically close this channel once the outgoing queue is empty</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#libmushu.ampdecorator.MarkerHandler.collect_incoming_data" title="libmushu.ampdecorator.MarkerHandler.collect_incoming_data"><tt class="xref py py-obj docutils literal"><span class="pre">collect_incoming_data</span></tt></a>(data)</td>
+<td>Got potentially partial data packet.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">connect</span></tt>(address)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">create_socket</span></tt>(family,&nbsp;type)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">del_channel</span></tt>([map])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">discard_buffers</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#libmushu.ampdecorator.MarkerHandler.found_terminator" title="libmushu.ampdecorator.MarkerHandler.found_terminator"><tt class="xref py py-obj docutils literal"><span class="pre">found_terminator</span></tt></a>()</td>
+<td>Found a complete packet.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_terminator</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_accept</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#libmushu.ampdecorator.MarkerHandler.handle_close" title="libmushu.ampdecorator.MarkerHandler.handle_close"><tt class="xref py py-obj docutils literal"><span class="pre">handle_close</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_connect</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_connect_event</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#libmushu.ampdecorator.MarkerHandler.handle_error" title="libmushu.ampdecorator.MarkerHandler.handle_error"><tt class="xref py py-obj docutils literal"><span class="pre">handle_error</span></tt></a>()</td>
+<td>An error occurred.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_expt</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_expt_event</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_read</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_read_event</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_write</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_write_event</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">initiate_send</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">listen</span></tt>(num)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">log</span></tt>(message)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">log_info</span></tt>(message[,&nbsp;type])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">push</span></tt>(data)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">push_with_producer</span></tt>(producer)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">readable</span></tt>()</td>
+<td>predicate for inclusion in the readable for select()</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">recv</span></tt>(buffer_size)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">send</span></tt>(data)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_reuse_addr</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_socket</span></tt>(sock[,&nbsp;map])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_terminator</span></tt>(term)</td>
+<td>Set the input delimiter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#libmushu.ampdecorator.MarkerHandler.writable" title="libmushu.ampdecorator.MarkerHandler.writable"><tt class="xref py py-obj docutils literal"><span class="pre">writable</span></tt></a>()</td>
+<td>Signal weather the socket is ready to send data.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libmushu.ampdecorator.MarkerHandler.collect_incoming_data">
+<tt class="descname">collect_incoming_data</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="../_modules/libmushu/ampdecorator.html#MarkerHandler.collect_incoming_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.ampdecorator.MarkerHandler.collect_incoming_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Got potentially partial data packet.</p>
+<p>This method collects potentially incomplete data packets and
+records the timestamp when the first part of the incomplete data
+packet arrived.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : str</p>
+<blockquote class="last">
+<div><p>the data packet</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="libmushu.ampdecorator.MarkerHandler.found_terminator">
+<tt class="descname">found_terminator</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/libmushu/ampdecorator.html#MarkerHandler.found_terminator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.ampdecorator.MarkerHandler.found_terminator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Found a complete packet.</p>
+<p>A complete data packet has arrived. Put the data packet with its
+timestamp in the queue. And reset the timestamp.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libmushu.ampdecorator.MarkerHandler.handle_close">
+<tt class="descname">handle_close</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/libmushu/ampdecorator.html#MarkerHandler.handle_close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.ampdecorator.MarkerHandler.handle_close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="libmushu.ampdecorator.MarkerHandler.handle_error">
+<tt class="descname">handle_error</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/libmushu/ampdecorator.html#MarkerHandler.handle_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.ampdecorator.MarkerHandler.handle_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>An error occurred.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="libmushu.ampdecorator.MarkerHandler.writable">
+<tt class="descname">writable</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/libmushu/ampdecorator.html#MarkerHandler.writable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.ampdecorator.MarkerHandler.writable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal weather the socket is ready to send data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>writable</strong> : bool</p>
+<blockquote class="last">
+<div><p>ready to send or not</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="libmushu.ampdecorator.MarkerServer">
+<em class="property">class </em><tt class="descclassname">libmushu.ampdecorator.</tt><tt class="descname">MarkerServer</tt><big>(</big><em>queue</em>, <em>proto</em><big>)</big><a class="reference internal" href="../_modules/libmushu/ampdecorator.html#MarkerServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.ampdecorator.MarkerServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/asyncore.html#asyncore.dispatcher" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">asyncore.dispatcher</span></tt></a></p>
+<p>The marker server.</p>
+<p>It opens a TCP or UDP socket and assigns a <a class="reference internal" href="#libmushu.ampdecorator.MarkerHandler" title="libmushu.ampdecorator.MarkerHandler"><tt class="xref py py-class docutils literal"><span class="pre">MarkerHandler</span></tt></a> to
+the opened socket.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">addr</span></tt></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">accept</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_channel</span></tt>([map])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">bind</span></tt>(addr)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">close</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">connect</span></tt>(address)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">create_socket</span></tt>(family,&nbsp;type)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">del_channel</span></tt>([map])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#libmushu.ampdecorator.MarkerServer.handle_accept" title="libmushu.ampdecorator.MarkerServer.handle_accept"><tt class="xref py py-obj docutils literal"><span class="pre">handle_accept</span></tt></a>()</td>
+<td>Accept an incomming TCP connection.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_close</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_connect</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_connect_event</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_error</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_expt</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_expt_event</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_read</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_read_event</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_write</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle_write_event</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">listen</span></tt>(num)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">log</span></tt>(message)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">log_info</span></tt>(message[,&nbsp;type])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">readable</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">recv</span></tt>(buffer_size)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">send</span></tt>(data)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_reuse_addr</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_socket</span></tt>(sock[,&nbsp;map])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">writable</span></tt>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="libmushu.ampdecorator.MarkerServer.handle_accept">
+<tt class="descname">handle_accept</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/libmushu/ampdecorator.html#MarkerServer.handle_accept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.ampdecorator.MarkerServer.handle_accept" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accept an incomming TCP connection.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
-<dt id="libmushu.ampdecorator.tcp_reader">
-<tt class="descclassname">libmushu.ampdecorator.</tt><tt class="descname">tcp_reader</tt><big>(</big><em>queue</em>, <em>running</em>, <em>ready</em><big>)</big><a class="reference internal" href="../_modules/libmushu/ampdecorator.html#tcp_reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.ampdecorator.tcp_reader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Marker-reading process.</p>
-<p>This method runs in a seperate process and receives TCP markers.
-Whenever a marker is received, it is put together with a timestamp
-into a queue.</p>
+<dt id="libmushu.ampdecorator.marker_reader">
+<tt class="descclassname">libmushu.ampdecorator.</tt><tt class="descname">marker_reader</tt><big>(</big><em>queue</em>, <em>running</em>, <em>ready</em><big>)</big><a class="reference internal" href="../_modules/libmushu/ampdecorator.html#marker_reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.ampdecorator.marker_reader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the TCP and UDP MarkerServers and start the receiving loop.</p>
+<p>This method runs in a separate process and receives UDP and TCP
+markers. Whenever a marker is received, it is put together with a
+timestamp into a queue.</p>
+<p>After the TCP and UDP servers are set up the <tt class="docutils literal"><span class="pre">ready</span></tt> event is set
+and the method enters the loop that runs forever until the
+<tt class="docutils literal"><span class="pre">running</span></tt> Event is cleared. Received markers are put in the
+<tt class="docutils literal"><span class="pre">queue</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -296,7 +613,7 @@ receiving marker via TCP.</p>
 <dl class="class">
 <dt id="libmushu.amplifier.Amplifier">
 <em class="property">class </em><tt class="descclassname">libmushu.amplifier.</tt><tt class="descname">Amplifier</tt><a class="reference internal" href="../_modules/libmushu/amplifier.html#Amplifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmushu.amplifier.Amplifier" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>Amplifier base class.</p>
 <p>The base class is very generic on purpose. Amplifiers from different
 vendors vary in so many ways that it is difficult to find a common
@@ -617,7 +934,9 @@ an AmpDecorator and returns an instance.</p>
 <li><a class="reference internal" href="#">libmushu package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-libmushu.ampdecorator">libmushu.ampdecorator module</a></li>
+<li><a class="reference internal" href="#module-libmushu.ampdecorator">libmushu.ampdecorator module</a><ul>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-libmushu.amplifier">libmushu.amplifier module</a></li>
 <li><a class="reference internal" href="#module-libmushu">Module contents</a></li>
 </ul>
@@ -675,7 +994,7 @@ an AmpDecorator and returns an instance.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Bastian Venthur.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

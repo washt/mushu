@@ -11,7 +11,7 @@ libmushu.ampdecorator
    
       Event
       Queue
-      tcp_reader
+      marker_reader
    
    
 
@@ -23,6 +23,8 @@ libmushu.ampdecorator
    
       AmpDecorator
       Amplifier
+      MarkerHandler
+      MarkerServer
       Process
    
    
