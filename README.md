@@ -61,7 +61,7 @@ Online Documentation
 
 Online documentation is available [here][mushudoc].
 
-  [mushudoc]: http://venthur.github.io/mushu
+  [mushudoc]: http://bbci.github.io/mushu
 
 Motivation
 ----------
@@ -115,8 +115,8 @@ For a complete BCI system written in Python use Mushu together with
 written in Python and is suitable for running on-line BCI experiments as well as
 off-line analysis of EEG data. Pyff a BCI feedback and -stimulus framework.
 
-  [pyff]: http://github.com/venthur/pyff
-  [wyrm]: http://github.com/venthur/wyrm
+  [pyff]: http://github.com/bbci/pyff
+  [wyrm]: http://github.com/bbci/wyrm
 
 
 

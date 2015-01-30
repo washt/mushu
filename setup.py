@@ -12,8 +12,8 @@ setup(
     long_description = 'A Python library for BCI signal acquisition. It can be used as a stand-alone application or as a library.',
     author = 'Bastian Venthur',
     author_email = 'bastian.venthur@tu-berlin.de',
-    url = 'http://venthur.github.io/mushu/',
-    download_url = 'http://github.com/venthur/mushu/',
+    url = 'http://bbci.github.io/mushu/',
+    download_url = 'http://github.com/bbci/mushu/',
     license = 'GPL2',
     platforms = 'any',
     classifiers = [
