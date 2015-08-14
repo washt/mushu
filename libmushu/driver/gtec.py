@@ -49,7 +49,8 @@ class GUSBamp(Amplifier):
         logger.info('Initializing GUSBamp instance')
         # list of available amps
         self.amps = []
-        for bus in usb.busses():
+        busses = usb.busses()
+        for bus in busses:
             for device in bus.devices:
                 if (device.idVendor in [ID_VENDOR_GTEC, ID_VENDOR_GTEC2] and
                     device.idProduct == ID_PRODUCT_GUSB_AMP):
@@ -61,7 +62,9 @@ class GUSBamp(Amplifier):
         self.devh = device.open()
         # detach kernel driver if nessecairy
         config = device.configurations[0]
-        self.devh.setConfiguration(config)
+
+        # @TODO setConfiguration breaks, add try catch block
+        # self.devh.setConfiguration(config)
         assert(len(config.interfaces) > 0)
         # sometimes it is the other one
         first_interface = config.interfaces[0][0]
@@ -69,7 +72,9 @@ class GUSBamp(Amplifier):
             first_interface = config.interfaces[0][1]
         first_setting = first_interface.alternateSetting
         self.devh.claimInterface(first_interface)
-        self.devh.setAltInterface(first_interface)
+        #@TODO setAltInterfaces breaks, add try catch block
+        # self.devh.setAltInterface(first_interface)
+        
         # initialization straight from the usb-dump
         self.set_mode('data')
         self.devh.controlMsg(CX_OUT, 0xb6, value=0x80, buffer=0)
